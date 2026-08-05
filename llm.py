@@ -1,14 +1,17 @@
 import os
 from dotenv import load_dotenv
+import streamlit as st
 from google import genai
 
-# Load environment variables
 load_dotenv()
 
-# Create Gemini client
-client = genai.Client(
-    api_key=os.getenv("GOOGLE_API_KEY")
-)
+# Read API key from Streamlit Secrets first, then .env
+api_key = st.secrets.get("GOOGLE_API_KEY", os.getenv("GOOGLE_API_KEY"))
+
+if not api_key:
+    raise ValueError("GOOGLE_API_KEY is missing.")
+
+client = genai.Client(api_key=api_key)
 
 MODEL = "gemini-3.5-flash"
 
